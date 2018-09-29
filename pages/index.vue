@@ -11,28 +11,36 @@
             <td>ID</td>
             <td>Name</td>
             <td>Price</td>
+            <td></td>
           </tr>
         </thead>
         <tbody>
           <tr v-bind:key="item.id" v-for="item in items">
             <td>{{ item.id }}</td>
+            <td class="image is-96x96"><img v-bind:src="item.image" width="96" height="96">
+            </td>
             <td>{{ item.name }}</td>
             <td>{{ item.price }}</td>
+            <td><button class="button is-link is-small" v-on:click="ADD_TO_CART(item)">Add</button></td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div>
+      {{ cart.length }} items
     </div>
   </section>
 </template>
 
 <script>
 import Logo from '~/components/Logo.vue'
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
-  components: {
-    Logo
-  },
+  // components: {
+  //   Logo
+  // },
   async fetch ({ store, params }) {
     // https://ja.nuxtjs.org/api/pages-fetch#vuex
     await store.dispatch("GET_ITEMS");
@@ -40,8 +48,11 @@ export default {
   computed: {
     // https://vuex.vuejs.org/ja/guide/getters.html#mapgetters-ヘルパー
     ...mapGetters([
-      "items"
+      "items", "cart"
     ])
+  },
+  methods: {
+    ...mapActions([ "ADD_TO_CART" ])
   }
 }
 </script>
