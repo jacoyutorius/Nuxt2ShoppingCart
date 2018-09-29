@@ -12,6 +12,15 @@ app.set('port', port)
 let config = require('../nuxt.config.js')
 config.dev = !(process.env.NODE_ENV === 'production')
 
+// GET http://localhost:3000/api/v1/
+app.get('/api/v1/items',function(req,res){
+  res.json([
+    {id: 20239023, name: "Ruby入門", image: "", price: 2980},
+    {id: 99230931, name: "やってはいけないデザイン", image: "", price: 1944},
+    {id: 76912056, name: "ソラリス", image: "https://images-fe.ssl-images-amazon.com/images/I/41WiQOvQaLL._SY346_.jpg", price: 972}
+  ]);
+});
+
 async function start() {
   // Init Nuxt.js
   const nuxt = new Nuxt(config)
