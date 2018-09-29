@@ -187,6 +187,14 @@ export default {
 
 <style>
 
+.navbar {
+  margin: 1em 0 2em 0px
+}
+
+.messages {
+  margin: 0em 0 2em 0px
+}
+
 .title {
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
