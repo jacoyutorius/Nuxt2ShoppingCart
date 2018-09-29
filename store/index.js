@@ -20,6 +20,9 @@ const store = () => new Vuex.Store({
       if (!state.cart.includes(item.id)) {
         state.cart.push(item.id)
       }
+    },
+    CLEAR_CART(state) {
+      state.cart = []
     }
   },
   actions: {
@@ -29,6 +32,9 @@ const store = () => new Vuex.Store({
     },
     ADD_TO_CART({ commit }, item) {
       commit("ADD_TO_CART", item)
+    },
+    CLEAR_CART({ commit }) {
+      commit("CLEAR_CART")
     }
   }
 })

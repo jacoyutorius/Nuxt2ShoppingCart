@@ -49,7 +49,7 @@
                 </div>
               </div>
               <div class="content">
-                <button class="button is-link" v-on:click="ADD_TO_CART(item)">Add</button>
+                <button class="button is-link" v-on:click="addToCart(item)">Add</button>
               </div>
             </div>
           </div>
@@ -86,6 +86,7 @@
         <footer class="modal-card-foot">
           <button class="button is-success">Order</button>
           <button class="button" v-on:click="toggleCartDialog">Cancel</button>
+          <button class="button is-danger" v-on:click="clearCart">Clear Cart</button>
         </footer>
       </div>
     </div>
@@ -108,6 +109,14 @@ export default {
   async fetch ({ store, params }) {
     // https://ja.nuxtjs.org/api/pages-fetch#vuex
     await store.dispatch("GET_ITEMS");
+  },
+  mounted: () => {
+    if (Object.keys(window.localStorage).includes("Nuxt2ShoppingCart") && window.localStorage.getItem("Nuxt2ShoppingCart") != ""){
+      let localCache = JSON.parse(window.localStorage.getItem("Nuxt2ShoppingCart"))
+      localCache.cart.forEach(function(itemId){
+        this.$store.dispatch("ADD_TO_CART", {id: itemId})
+      }.bind($nuxt))
+    }
   },
   computed: {
     // https://vuex.vuejs.org/ja/guide/getters.html#mapgetters-ヘルパー
@@ -143,7 +152,18 @@ export default {
     toggleCartDialog: function(){
       this.modalOpen = !this.modalOpen
     },
-    ...mapActions([ "ADD_TO_CART" ])
+    addToCart: function(item){
+      this.$store.dispatch("ADD_TO_CART", item)
+      window.localStorage.setItem("Nuxt2ShoppingCart", JSON.stringify({
+        cart: this.cart
+      }))
+    },
+    clearCart: function(){
+      this.$store.dispatch("CLEAR_CART")
+      window.localStorage.setItem("Nuxt2ShoppingCart", "")
+      this.toggleCartDialog()
+    }
+    // ...mapActions([ "ADD_TO_CART" ])
   }
 }
 </script>
