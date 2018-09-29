@@ -17,7 +17,9 @@ const store = () => new Vuex.Store({
       state.items = data
     },
     ADD_TO_CART(state, item) {
-      state.cart.push(item.id)
+      if (!state.cart.includes(item.id)) {
+        state.cart.push(item.id)
+      }
     }
   },
   actions: {
