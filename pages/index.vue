@@ -32,6 +32,18 @@
       </div>
     </nav>
 
+    <div class="messages" v-if="messages.length > 0">
+      <article class="message is-success">
+        <div class="message-header">
+          <p>Success</p>
+          <button class="delete" aria-label="delete" v-on:click="clearMessage"></button>
+        </div>
+        <div class="message-body">
+          <li v-bind:key="message" v-for="message in messages">{{ message }}</li>
+        </div>
+      </article>
+    </div>
+
     <div class="contents">
       <div class="columns" v-bind:key="row.index" v-for="row in cardItems">
         <div class="column" v-bind:key="item.id" v-for="item in row.items">
@@ -103,7 +115,8 @@ export default {
   // },
   data: ()=>{
     return {
-      modalOpen: false
+      modalOpen: false,
+      messages: []
     }
   },
   async fetch ({ store, params }) {
@@ -161,7 +174,11 @@ export default {
     clearCart: function(){
       this.$store.dispatch("CLEAR_CART")
       window.localStorage.setItem("Nuxt2ShoppingCart", "")
+      this.messages.push("Cart cleard")
       this.toggleCartDialog()
+    },
+    clearMessage: function(){
+      this.messages = []
     }
     // ...mapActions([ "ADD_TO_CART" ])
   }
