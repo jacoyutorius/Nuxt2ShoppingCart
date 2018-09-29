@@ -1,34 +1,68 @@
 <template>
   <section class="container">
-    <div class="title">
-      <h2>Nuxt2.0 ShoppingCart</h2>
-    </div>
+    <nav class="navbar is-transparent">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <h2 class="title">Nuxt2.0 ShoppingCart</h2>
+        </a>
+        <div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
 
-    <div>
-      <table class="table">
-        <thead>
-          <tr>
-            <td>ID</td>
-            <td>Name</td>
-            <td>Price</td>
-            <td></td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-bind:key="item.id" v-for="item in items">
-            <td>{{ item.id }}</td>
-            <td class="image is-96x96"><img v-bind:src="item.image" width="96" height="96">
-            </td>
-            <td>{{ item.name }}</td>
-            <td>{{ item.price }}</td>
-            <td><button class="button is-link is-small" v-on:click="ADD_TO_CART(item)">Add</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div id="navbarExampleTransparentExample" class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="field is-grouped">
+              <p class="control">
+                <a class="bd-tw-button button is-link" target="_blank">
+                  <span class="icon">
+                    <i class="fab fa-twitter"></i>
+                  </span>
+                  <span>
+                    Cart {{ cart.length }} items
+                  </span>
+                </a>
+              </p>
+              <!-- <p class="control">
+                <a class="button is-primary" href="https://github.com/jgthms/bulma/releases/download/0.7.1/bulma-0.7.1.zip">
+                  <span class="icon">
+                    <i class="fas fa-download"></i>
+                  </span>
+                  <span>Download</span>
+                </a>
+              </p> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-    <div>
-      {{ cart.length }} items
+    <div class="contents">
+      <div class="columns" v-bind:key="row.index" v-for="row in card_items">
+        <div class="column" v-bind:key="item.id" v-for="item in row.items">
+          <div class="card">
+            <div class="card-image">
+              <figure class="image is-4by3">
+                <img v-bind:src="item.image" alt="Placeholder image">
+              </figure>
+            </div>
+            <div class="card-content">
+              <div class="media">
+                <div class="media-content">
+                  <a><p class="title is-4">{{ item.name }}</p></a>
+                  <p class="subtitle is-6">¥ {{ item.price }}</p>
+                </div>
+              </div>
+              <div class="content">
+                <button class="button is-link" v-on:click="ADD_TO_CART(item)">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -47,6 +81,14 @@ export default {
   },
   computed: {
     // https://vuex.vuejs.org/ja/guide/getters.html#mapgetters-ヘルパー
+    card_items() {
+      let ar = []
+      let row = Math.round(this.items.length / 4)
+      for(let i = 0; i < row; i++) {
+        ar.push({index: i, items: this.items.slice(i*4, (i*4) + 4)})
+      }
+      return ar
+    },
     ...mapGetters([
       "items", "cart"
     ])
