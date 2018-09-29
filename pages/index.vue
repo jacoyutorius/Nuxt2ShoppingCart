@@ -17,7 +17,7 @@
           <div class="navbar-item">
             <div class="field is-grouped">
               <p class="control">
-                <a class="bd-tw-button button is-link" target="_blank">
+                <a class="button is-link modal-button" data-target="modal-cart" aria-haspopup="true" v-on:click="toggleCartDialog">
                   <span class="icon">
                     <i class="fab fa-twitter"></i>
                   </span>
@@ -26,14 +26,6 @@
                   </span>
                 </a>
               </p>
-              <!-- <p class="control">
-                <a class="button is-primary" href="https://github.com/jgthms/bulma/releases/download/0.7.1/bulma-0.7.1.zip">
-                  <span class="icon">
-                    <i class="fas fa-download"></i>
-                  </span>
-                  <span>Download</span>
-                </a>
-              </p> -->
             </div>
           </div>
         </div>
@@ -41,7 +33,7 @@
     </nav>
 
     <div class="contents">
-      <div class="columns" v-bind:key="row.index" v-for="row in card_items">
+      <div class="columns" v-bind:key="row.index" v-for="row in cardItems">
         <div class="column" v-bind:key="item.id" v-for="item in row.items">
           <div class="card">
             <div class="card-image">
@@ -64,6 +56,39 @@
         </div>
       </div>
     </div>
+
+    <!-- カート一覧モーダル -->
+    <div id="modal-cart" class="modal" v-bind:class="modalState">
+      <div class="modal-background" v-on:click="toggleCartDialog"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Cart</p>
+          <button class="delete" aria-label="close" v-on:click="toggleCartDialog"></button>
+        </header>
+        <section class="modal-card-body">
+          <table class="table">
+            <tbody>
+              <tr v-bind:key="item.id" v-for="item in cartItems">
+                <td class="image is-64x64"><img v-bind:src="item.image"></td>
+                <td>{{ item.name }}</td>
+                <td>¥{{ item.price }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>¥{{ cartSumPrice }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-success">Order</button>
+          <button class="button" v-on:click="toggleCartDialog">Cancel</button>
+        </footer>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -75,13 +100,18 @@ export default {
   // components: {
   //   Logo
   // },
+  data: ()=>{
+    return {
+      modalOpen: false
+    }
+  },
   async fetch ({ store, params }) {
     // https://ja.nuxtjs.org/api/pages-fetch#vuex
     await store.dispatch("GET_ITEMS");
   },
   computed: {
     // https://vuex.vuejs.org/ja/guide/getters.html#mapgetters-ヘルパー
-    card_items() {
+    cardItems() {
       let ar = []
       let row = Math.round(this.items.length / 4)
       for(let i = 0; i < row; i++) {
@@ -89,11 +119,30 @@ export default {
       }
       return ar
     },
+    cartItems(){
+      return this.cart.map((itemId)=>{
+        let index = this.items.findIndex((item)=>{
+          return item.id == itemId
+        })
+        return this.items[index]
+      })
+    },
+    cartSumPrice(){
+      return this.cartItems.reduce((sum, item)=>{
+        return sum + item.price
+      }, 0)
+    },
+    modalState(){
+      return this.modalOpen ? "is-active" : ""
+    },
     ...mapGetters([
       "items", "cart"
     ])
   },
   methods: {
+    toggleCartDialog: function(){
+      this.modalOpen = !this.modalOpen
+    },
     ...mapActions([ "ADD_TO_CART" ])
   }
 }
